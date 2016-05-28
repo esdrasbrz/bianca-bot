@@ -24,8 +24,21 @@ api = twitter.Api(consumer_key        = CONSUMER_KEY,    \
 print("Conectado com sucesso!")
 print("")
 
-search = api.GetSearch(term="vestibular medicina", count="10")
+## Imprime menu de acoes
+print("Menu:")
+print("Seguir novas pessoas - S")
 
-for s in search:
-    api.CreateFriendship(s.user.id)
-    print(s.user.screen_name)
+# recebe a opcao
+opcao = raw_input("Opção: ")
+
+## Verifica as opcoes e faz as acoes
+if opcao == 's' or opcao == 'S': # seguir novas pessoas
+    from follow import Follow
+
+    # instancia a Classe
+    follow = Follow(api)
+
+    term = raw_input("Digite os termos de pesquisa: ")
+    count = raw_input("Quantos resultados? ")
+
+    follow.follow_by_search(term=term, count=count)
