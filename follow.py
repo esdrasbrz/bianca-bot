@@ -5,8 +5,6 @@ Classe com as funcoes para seguir novas pessoas com base em postagens e seguidor
 @author Esdras R. Carmo
 """
 
-import time
-
 class Follow:
     """
     Construtor que recebe a api twitter
@@ -26,19 +24,17 @@ class Follow:
 
         # percorre os resultados
         for result in search:
+            post = result.text
+
             # Printa o resultado na tela
-            print(result.text)
+            print(post)
             print("")
             print(result.user.screen_name)
             print("")
 
-            # verifica a opcao
-            opcao = raw_input("Deseja seguir? (S ou N) ")
-
-            if opcao == 'S' or opcao == 's':
-                # segue o usuário
-                self.api.CreateFriendship(result.user.id)
-                print("Seguido com sucesso!")
+            # segue o usuário
+            self.api.CreateFriendship(result.user.id)
+            print("Seguido com sucesso!")
 
             print("")
             print("")

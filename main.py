@@ -24,21 +24,26 @@ api = twitter.Api(consumer_key        = CONSUMER_KEY,    \
 print("Conectado com sucesso!")
 print("")
 
-## Imprime menu de acoes
-print("Menu:")
-print("Seguir novas pessoas - S")
+while True:
+    ## Imprime menu de acoes
+    print("Menu:")
+    print("Seguir novas pessoas - S")
+    print("Sair - 0")
 
-# recebe a opcao
-opcao = raw_input("Opção: ")
+    # recebe a opcao
+    opcao = raw_input("Opção: ")
 
-## Verifica as opcoes e faz as acoes
-if opcao == 's' or opcao == 'S': # seguir novas pessoas
-    from follow import Follow
+    ## Verifica as opcoes e faz as acoes
+    if opcao == 's' or opcao == 'S': # seguir novas pessoas
+        from follow import Follow
 
-    # instancia a Classe
-    follow = Follow(api)
+        # instancia a Classe
+        follow = Follow(api)
 
-    term = raw_input("Digite os termos de pesquisa: ")
-    count = raw_input("Quantos resultados? ")
+        term = raw_input("Digite os termos de pesquisa: ")
+        count = raw_input("Quantos resultados? ")
 
-    follow.follow_by_search(term=term, count=count)
+        follow.follow_by_search(term=term, count=count)
+    elif opcao == '0':
+        print("Bye!")
+        break
