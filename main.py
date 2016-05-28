@@ -22,3 +22,11 @@ api = twitter.Api(consumer_key        = CONSUMER_KEY,    \
                   access_token_key    = ACCESS_TOKEN,    \
                   access_token_secret = ACCESS_TOKEN_SECRET)
 print("Conectado com sucesso!")
+print("")
+
+search = api.GetSearch(term="dicas medicina", count="3")
+
+tweets = [x.text for x in search]
+
+import pprint
+pprint.pprint(tweets)
