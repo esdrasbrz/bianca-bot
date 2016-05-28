@@ -24,9 +24,8 @@ api = twitter.Api(consumer_key        = CONSUMER_KEY,    \
 print("Conectado com sucesso!")
 print("")
 
-search = api.GetSearch(term="dicas medicina", count="3")
+search = api.GetSearch(term="vestibular medicina", count="10")
 
-tweets = [x.text for x in search]
-
-import pprint
-pprint.pprint(tweets)
+for s in search:
+    api.CreateFriendship(s.user.id)
+    print(s.user.screen_name)
