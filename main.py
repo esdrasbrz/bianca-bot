@@ -29,6 +29,7 @@ while True:
     print("Menu:")
     print("Seguir novas pessoas - S")
     print("Postar com base em trends - PT")
+    print("RT com base em trends - RT")
     print("Sair - 0")
 
     # recebe a opcao
@@ -51,6 +52,12 @@ while True:
         # instancia a Classe
         post = Post(api)
         post.post_by_trends()
+    elif opcao.lower() == 'rt': # RT
+        from post import Post
+
+        # instancia a Classe
+        post = Post(api)
+        post.rt_by_trends()
     elif opcao == '0': # sair
         print("Bye!")
         break

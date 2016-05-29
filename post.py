@@ -16,9 +16,9 @@ class Post:
         self.api = api
 
     """
-    Posta novo conteudo com base nos trends topics
+    Retorna um post aleatorio em trend aleatorio
     """
-    def post_by_trends(self):
+    def get_post_trend_random(self):
         # pesquisa os trendings topics com id de campinas
         trends = self.api.GetTrendsWoeid(455828)
 
@@ -42,5 +42,25 @@ class Post:
         # pega uma postagem aleatoria
         index = randint(0, len(possiveis)-1)
 
+        # retorna a postagem
+        return possiveis[index]
+
+    """
+    Posta novo conteudo com base nos trends topics
+    """
+    def post_by_trends(self):
+        # pega a postagem aleatoria
+        post = self.get_post_trend_random()
+
         # posta a mensagem
-        self.api.PostUpdate(possiveis[index].text)
+        self.api.PostUpdate(post.text)
+
+    """
+    RT em conteudo com base nos trends topics
+    """
+    def rt_by_trends(self):
+        # pega a postagem aleatoria
+        post = self.get_post_trend_random()
+
+        # Retwitta
+        self.api.PostRetweet(post.id)
