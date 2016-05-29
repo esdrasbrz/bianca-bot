@@ -15,19 +15,15 @@ class Post:
         self.api = api
 
     """
-    Posta novo conteudo com base no termo de pesquisa
+    Posta novo conteudo com base nos trends topics
     """
-    def post(self, term="medicina", count="100"):
-        # pesquisa o termo com count resultados
-        search = self.api.GetSearch(term=term, count=count)
+    def post(self):
+        # pesquisa os trendings topics
+        trends = self.api.GetTrendsWoeid(455828)
 
         # cria um filtro regex
         filtro = re.compile(r'\@')
 
         # percorre os resultados
-        for result in search:
-            text = result.text
-
-            # filtra o resultado
-            if filtro.search(text) is None:
-                print(text)
+        for trend in trends:
+            print trend

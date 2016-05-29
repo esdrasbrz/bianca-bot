@@ -50,10 +50,7 @@ while True:
 
         # instancia a Classe
         post = Post(api)
-
-        term = raw_input("Digite os termos de pesquisa: ")
-
-        post.post(term=term)
+        post.post()
     elif opcao == '0': # sair
         print("Bye!")
         break
