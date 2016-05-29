@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Arquivo principal do BOT, que checa as postagens sobre medicina e posta automaticamente
-no perfil.
+Arquivo principal do BOT, totalmente autonomo que decide sozinho as opcoes
 
 @author Esdras R. Carmo
 """
 
 import twitter
+import time
+from random import randint
 from follow import Follow
 from post import Post
 
@@ -16,6 +17,9 @@ CONSUMER_SECRET = "bUZmQxZnaZLfPKeUIRC7EsfpK6S06RUwFHtGqWaaWnduXsC55C"
 ACCESS_TOKEN = "736567186169430016-AoxkDtl5irWfSp6XryCDDdKmziOiRsI"
 ACCESS_TOKEN_SECRET = "v1X0bORIMR9yYDdpTNUgJMyJuEIHLJA3fnQZy77TKgWjK"
 
+## converte de horas para seguntos
+def hour_to_sec(hours):
+    return hours*3600
 
 ## Abre a conexao
 print("Conectando-se")
@@ -26,37 +30,35 @@ api = twitter.Api(consumer_key        = CONSUMER_KEY,    \
 print("Conectado com sucesso!")
 print("")
 
+# instancia as classes
+post = Post(api)
+follow = Follow(api)
+
+# Loop de acoes
 while True:
-    ## Imprime menu de acoes
-    print("Menu:")
-    print("Seguir novas pessoas - S")
-    print("Postar com base em trends - PT")
-    print("RT com base em trends - RT")
-    print("Favoritar com base em timeline - F")
-    print("RT com base em timeline - RTT")
-    print("Sair - 0")
+    # lista de acoes
+    acoes = []
 
-    # recebe a opcao
-    opcao = raw_input("Opção: ")
-
-    # instancia as classes
-    post = Post(api)
-    follow = Follow(api)
+    # encontra uma opcao entre postar ou dar RT
+    acoes.append(randint(1, 3))
+    # favorita algo na timeline
+    acoes.append(4)
 
     ## Verifica as opcoes e faz as acoes
-    if opcao.lower() == 's': # seguir novas pessoas
-        term = raw_input("Digite os termos de pesquisa: ")
-        count = raw_input("Quantos resultados? ")
+    for opcao in acoes:
+        try:
+            if opcao == 1: # postar
+                post.post_by_trends()
+            elif opcao == 2: # RT
+                post.rt_by_trends()
+            elif opcao == 3: # RT na timeline
+                post.rt_by_timeline()
+            elif opcao == 4: # favorita na timeline
+                post.fav_by_timeline()
+        except UnicodeEncodeError as err:
+            print("Error: {0}".format(err))
 
-        follow.follow_by_search(term=term, count=count)
-    elif opcao.lower() == 'pt': # postar
-        post.post_by_trends()
-    elif opcao.lower() == 'rt': # RT
-        post.rt_by_trends()
-    elif opcao.lower() == 'f':
-        post.fav_by_timeline()
-    elif opcao.lower() == 'rtt':
-        post.rt_by_timeline()
-    elif opcao == '0': # sair
-        print("Bye!")
-        break
+    # sleep por um tempo
+    sleep = hour_to_sec(0.1)
+    print("Sleep: %.2f" %sleep)
+    time.sleep(sleep)
