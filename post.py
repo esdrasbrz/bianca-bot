@@ -6,6 +6,7 @@ Classe com as funcoes para postar novos conteudos no twitter, dar RT e favoritar
 """
 
 import re
+from random import randint
 
 class Post:
     """
@@ -18,12 +19,28 @@ class Post:
     Posta novo conteudo com base nos trends topics
     """
     def post(self):
-        # pesquisa os trendings topics
+        # pesquisa os trendings topics com id de campinas
         trends = self.api.GetTrendsWoeid(455828)
 
-        # cria um filtro regex
-        filtro = re.compile(r'\@')
+        # lista com os posts possiveis
+        possiveis = []
 
-        # percorre os resultados
-        for trend in trends:
-            print trend
+        # cria um filtro regex para retirar mentions
+        mentions_filter = re.compile(r'\@')
+
+        # pega um trending topic aleatorio
+        index = randint(0, len(trends)-1)
+        query = trends[index].query
+
+        # pesquisa com base na query
+        search = self.api.GetSearch(term=query, count="100")
+        for result in search:
+            # verifica o filtro de mentions
+            if mentions_filter.search(result.text) is None:
+                possiveis.append(result)
+
+        # pega uma postagem aleatoria
+        index = randint(0, len(possiveis)-1)
+
+        # posta a mensagem
+        self.api.PostUpdate(possiveis[index].text)
