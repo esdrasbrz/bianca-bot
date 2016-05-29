@@ -7,6 +7,8 @@ no perfil.
 """
 
 import twitter
+from follow import Follow
+from post import Post
 
 ## Constantes do APP
 CONSUMER_KEY = "iG3uFTZS7iNqGVlroey3cV5os"
@@ -30,34 +32,28 @@ while True:
     print("Seguir novas pessoas - S")
     print("Postar com base em trends - PT")
     print("RT com base em trends - RT")
+    print("Favoritar com base em timeline - F")
     print("Sair - 0")
 
     # recebe a opcao
     opcao = raw_input("Opção: ")
 
+    # instancia as classes
+    post = Post(api)
+    follow = Follow(api)
+
     ## Verifica as opcoes e faz as acoes
     if opcao.lower() == 's': # seguir novas pessoas
-        from follow import Follow
-
-        # instancia a Classe
-        follow = Follow(api)
-
         term = raw_input("Digite os termos de pesquisa: ")
         count = raw_input("Quantos resultados? ")
 
         follow.follow_by_search(term=term, count=count)
     elif opcao.lower() == 'pt': # postar
-        from post import Post
-
-        # instancia a Classe
-        post = Post(api)
         post.post_by_trends()
     elif opcao.lower() == 'rt': # RT
-        from post import Post
-
-        # instancia a Classe
-        post = Post(api)
         post.rt_by_trends()
+    elif opcao.lower() == 'f':
+        post.fav_by_timeline()
     elif opcao == '0': # sair
         print("Bye!")
         break

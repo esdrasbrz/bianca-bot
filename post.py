@@ -46,6 +46,28 @@ class Post:
         return possiveis[index]
 
     """
+    Retorna um post aleatorio da timeline
+    """
+    def get_post_time_random(self):
+        # pesquisa 50 posts da timeline
+        timeline = self.api.GetHomeTimeline(count="50", exclude_replies=True)
+
+        # lista com os posts possiveis
+        possiveis = []
+
+        # filtro regex de mentions
+        mentions_filter = re.compile(r'\@')
+
+        # filtra as postagens
+        for post in timeline:
+            if mentions_filter.search(post.text) is None:
+                possiveis.append(post)
+
+        # retorna uma postagem aleatoria
+        index = randint(0, len(possiveis)-1)
+        return possiveis[index]
+
+    """
     Posta novo conteudo com base nos trends topics
     """
     def post_by_trends(self):
@@ -54,6 +76,7 @@ class Post:
 
         # posta a mensagem
         self.api.PostUpdate(post.text)
+        print("Postado: %s\n" %post.text)
 
     """
     RT em conteudo com base nos trends topics
@@ -64,3 +87,14 @@ class Post:
 
         # Retwitta
         self.api.PostRetweet(post.id)
+        print("RT: %s\n" %post.text)
+
+    """
+    Favorita um tweet aleatorio da timeline
+    """
+    def fav_by_timeline(self):
+        post = self.get_post_time_random()
+
+        # Favorita
+        self.api.CreateFavorite(id = post.id)
+        print("Favoritado: %s\n" %post.text)
