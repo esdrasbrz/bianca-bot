@@ -33,6 +33,7 @@ while True:
     print("Postar com base em trends - PT")
     print("RT com base em trends - RT")
     print("Favoritar com base em timeline - F")
+    print("RT com base em timeline - RTT")
     print("Sair - 0")
 
     # recebe a opcao
@@ -54,6 +55,8 @@ while True:
         post.rt_by_trends()
     elif opcao.lower() == 'f':
         post.fav_by_timeline()
+    elif opcao.lower() == 'rtt':
+        post.rt_by_timeline()
     elif opcao == '0': # sair
         print("Bye!")
         break

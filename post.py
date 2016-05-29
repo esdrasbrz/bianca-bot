@@ -98,3 +98,14 @@ class Post:
         # Favorita
         self.api.CreateFavorite(id = post.id)
         print("Favoritado: %s\n" %post.text)
+
+    """
+    RT em conteudo com base na timeline
+    """
+    def rt_by_timeline(self):
+        # pega a postagem aleatoria
+        post = self.get_post_time_random()
+
+        # RT
+        self.api.PostRetweet(post.id)
+        print("RT: %s\n" %post.text)
