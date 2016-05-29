@@ -59,6 +59,6 @@ while True:
             print("Error: {0}".format(err))
 
     # sleep por um tempo
-    sleep = hour_to_sec(0.1)
+    sleep = hour_to_sec(0.2)
     print("Sleep: %.2f" %sleep)
     time.sleep(sleep)
