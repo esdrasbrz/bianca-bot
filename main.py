@@ -28,7 +28,7 @@ while True:
     ## Imprime menu de acoes
     print("Menu:")
     print("Seguir novas pessoas - S")
-    print("Postar - P")
+    print("Postar com base em trends - PT")
     print("Sair - 0")
 
     # recebe a opcao
@@ -45,12 +45,12 @@ while True:
         count = raw_input("Quantos resultados? ")
 
         follow.follow_by_search(term=term, count=count)
-    elif opcao.lower() == 'p': # postar
+    elif opcao.lower() == 'pt': # postar
         from post import Post
 
         # instancia a Classe
         post = Post(api)
-        post.post()
+        post.post_by_trends()
     elif opcao == '0': # sair
         print("Bye!")
         break

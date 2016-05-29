@@ -18,7 +18,7 @@ class Post:
     """
     Posta novo conteudo com base nos trends topics
     """
-    def post(self):
+    def post_by_trends(self):
         # pesquisa os trendings topics com id de campinas
         trends = self.api.GetTrendsWoeid(455828)
 
