@@ -58,7 +58,8 @@ while True:
         except UnicodeEncodeError as err:
             print("Error: {0}".format(err))
 
-    # sleep por um tempo
-    sleep = hour_to_sec(0.2)
+    # sleep por um tempo aleatorio
+    sleep = randint(60, hour_to_sec(0.5))
+
     print("Sleep: %.2f" %sleep)
     time.sleep(sleep)
