@@ -41,8 +41,8 @@ while True:
 
     # encontra uma opcao entre postar ou dar RT
     acoes.append(randint(1, 3))
-    # favorita algo na timeline
-    acoes.append(4)
+    # favorita algo na timeline/trends
+    acoes.append(randint(4, 5))
 
     ## Verifica as opcoes e faz as acoes
     for opcao in acoes:
@@ -55,11 +55,13 @@ while True:
                 post.rt_by_timeline()
             elif opcao == 4: # favorita na timeline
                 post.fav_by_timeline()
+            elif opcao == 5: # favorita nos trends
+                post.fav_by_trends()
         except UnicodeEncodeError as err:
             print("Error: {0}".format(err))
 
     # sleep por um tempo aleatorio
-    sleep = randint(60, hour_to_sec(0.5))
+    sleep = randint(60, hour_to_sec(0.3))
 
     print("Sleep: %.2f" %sleep)
     time.sleep(sleep)
