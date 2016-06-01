@@ -34,13 +34,23 @@ print("")
 post = Post(api)
 follow = Follow(api)
 
+# controle do num da acao
+acao = 0
+
 # Loop de acoes
 while True:
     # lista de acoes
     acoes = []
+    # atualiza acao
+    acao += 1
 
     # encontra uma opcao entre postar ou dar RT
     acoes.append(randint(1, 3))
+
+    # verifica se a acao eh par e nao vai postar algo
+    if acao%2 == 0 and acoes[0] != 1:
+        acoes.append(1) # postagem
+
     # favorita algo na timeline/trends
     acoes.append(randint(4, 5))
 
