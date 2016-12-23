@@ -71,7 +71,7 @@ while True:
             print("Error: {0}".format(err))
 
     # sleep por um tempo aleatorio
-    sleep = randint(60, hour_to_sec(0.3))
+    sleep = randint(60, hour_to_sec(1))
 
     print("Sleep: %.2f" %sleep)
     time.sleep(sleep)
