@@ -13,10 +13,33 @@ class Classify:
         # dicionário com as palavras encontradas e sua frequência
         self.dict = {}
 
+        # abre o banco de dados lendo os termos encontrados anteriormente
+        with open('dict_bd.txt', 'r') as arq:
+            linhas = arq.read().split('\n')
+
+            for linha in linhas:
+                try:
+                    linha = linha.split(':')
+                    self.dict[linha[0]] = int(linha[1])
+                except Exception:
+                    continue
+
+        self.log.append("Iniciado banco de dados com %d palavras." % len(self.dict))
+        self.log.flush()
+
         # lista com as palavras a serem ignoradas
         self.ignore = []
         with open('palavras_ignorar.txt', 'r') as arq:
             self.ignore = arq.read().split('\n')
+
+    """
+    Função para salvar em um arquivo o dicionário
+    """
+    def save_bd(self):
+        with open('dict_bd.txt', 'w') as arq:
+            for palavra in self.dict:
+                arq.write('%s:%d\n' % (palavra, self.dict[palavra]))
+
 
     """
     Função para analisar os trends topics do twitter 
@@ -42,13 +65,20 @@ class Classify:
             # percorre a pesquisa classificando as palavras encontradas
             for result in search:
                 for palavra in result.text.split(' '):
+                    if palavra[:4] == 'http':
+                        continue
+                    
+                    palavra = palavra.replace(':', '')
+
                     if palavra not in self.ignore:
                         if palavra not in self.dict:
                             self.dict[palavra] = 1
                         else:
                             self.dict[palavra] += 1
 
+        self.save_bd()
         self.log.append("Finalizando análise com %d palavras no dicionário." % len(self.dict))
+        self.log.flush()
 
     """
     Classifica o texto com base no banco de dados armazenado. Retorna um inteiro, quanto maior, melhor

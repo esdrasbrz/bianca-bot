@@ -38,6 +38,8 @@ class Follow:
             self.api.CreateFriendship(result.user.id)
             self.log.append("Seguido com sucesso!")
 
+            self.log.flush()
+
 
     """
     Encontra novas pessoas através de tendências nos trends em uma quantidade aleatória
