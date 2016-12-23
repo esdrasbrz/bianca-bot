@@ -40,6 +40,8 @@ class Follow:
 
             self.log.flush()
 
+        self.log.append("Seguido um total de %s usuários." % count)
+
 
     """
     Encontra novas pessoas através de tendências nos trends em uma quantidade aleatória
