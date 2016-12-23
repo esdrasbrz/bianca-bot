@@ -107,7 +107,7 @@ class Post:
         post = self.get_post_time_random()
 
         # Favorita
-        self.api.CreateFavorite(id = post.id)
+        self.api.CreateFavorite(status_id = post.id)
         print("Favoritado: %s\n" %post.text)
 
     """

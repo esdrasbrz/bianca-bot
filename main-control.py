@@ -40,12 +40,12 @@ while True:
     print("Sair - 0")
 
     # recebe a opcao
-    opcao = int(raw_input("Opção: "))
+    opcao = int(input("Opção: "))
 
     ## Verifica as opcoes e faz as acoes
     if opcao == 1: # seguir novas pessoas
-        term = raw_input("Digite os termos de pesquisa: ")
-        count = raw_input("Quantos resultados? ")
+        term = input("Digite os termos de pesquisa: ")
+        count = input("Quantos resultados? ")
 
         follow.follow_by_search(term=term, count=count)
     elif opcao == 2: # postar
