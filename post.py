@@ -79,6 +79,36 @@ class Post:
         self.log.append("Postado: %s\n" %post.text)
 
     """
+    Posta analisando um trend topic aleatório
+    """
+    def post_by_trends_with_analysis(self, classify):
+        # pesquisa os trendings topics com id de campinas
+        trends = self.api.GetTrendsWoeid(455828)
+
+        # cria um filtro regex para retirar mentions
+        mentions_filter = re.compile(r'\@')
+
+        # pega um trending topic aleatorio
+        index = randint(0, len(trends)-1)
+        query = trends[index].query
+
+        # pesquisa com base na query
+        search = self.api.GetSearch(term=query, count="100")
+
+        melhor_post = (search[0].text, classify.classify(search[0].text))
+        for result in search:
+            nota = classify.classify(result.text)
+
+            if nota > melhor_post[1]:
+                melhor_post = (result.text, nota)
+
+        # posta o melhor encontrado
+        self.api.PostUpdate(melhor_post[0])
+        self.log.append("Postado: %s" %melhor_post[0])
+        self.log.append("Nota: %d" %melhor_post[1])
+
+
+    """
     RT em conteudo com base nos trends topics
     """
     def rt_by_trends(self):

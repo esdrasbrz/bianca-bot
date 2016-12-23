@@ -10,6 +10,7 @@ from random import randint
 from follow import Follow
 from post import Post
 from log import Logger
+from classify import Classify
 
 ## converte de horas para seguntos
 def hour_to_sec(hours):
@@ -22,11 +23,11 @@ ACCESS_TOKEN = "736567186169430016-AoxkDtl5irWfSp6XryCDDdKmziOiRsI"
 ACCESS_TOKEN_SECRET = "v1X0bORIMR9yYDdpTNUgJMyJuEIHLJA3fnQZy77TKgWjK"
 
 ## Constantes para os randoms
-MIN_FOLLOW = 3
-MAX_FOLLOW = 50
+MIN_FOLLOW = 50
+MAX_FOLLOW = 200
 ACOES_POR_ITERACAO = 2
-MIN_SLEEP = 30
-MAX_SLEEP = hour_to_sec(1)
+MIN_SLEEP = 10
+MAX_SLEEP = hour_to_sec(0.3)
 
 ## instancia o logger
 log = Logger()
@@ -46,22 +47,29 @@ log.flush()
 # instancia as classes
 post = Post(api, log)
 follow = Follow(api, log)
+classify = Classify(api, log)
 
 ## mapa com as ações possíveis
 acoes = {1: lambda: follow.follow_by_trend(count=str(randint(MIN_FOLLOW, MAX_FOLLOW))),
-        2: lambda: post.post_by_trends(),
+        2: lambda: post.post_by_trends_with_analysis(classify),
         3: lambda: post.rt_by_trends(),
         4: lambda: post.fav_by_timeline(),
         5: lambda: post.rt_by_timeline()}
 
 ## MAIN LOOP
 while True:
-    # escolhe algumas opções
-    opcoes = [randint(min(acoes.keys()), max(acoes.keys())) for i in range(ACOES_POR_ITERACAO)]
-
     try:
-        for opcao in opcoes:
-            acoes[opcao]()
+        # faz a análise no twitter
+        classify.analyze()
+        log.flush()
+
+        # segue novos usuários
+        acoes[1]()
+        log.flush()
+
+        # posta pelo trends com análise
+        acoes[2]()
+        log.flush()
     except Exception as e:
         log.append("EXCEPTION: %s" % e)
 
