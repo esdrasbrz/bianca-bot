@@ -32,6 +32,9 @@ class Classify:
         with open('palavras_ignorar.txt', 'r') as arq:
             self.ignore = arq.read().split('\n')
 
+        # lista com os caracteres a serem removidos
+        self.remover = list(".,/?;:'\"[]{}\\|-_=+`~!@#$%^&*()1234567890")
+
     """
     Função para salvar em um arquivo o dicionário
     """
@@ -65,12 +68,15 @@ class Classify:
             # percorre a pesquisa classificando as palavras encontradas
             for result in search:
                 for palavra in result.text.split(' '):
+                    # ignora um link
                     if palavra[:4] == 'http':
                         continue
                     
-                    palavra = palavra.replace(':', '')
+                    # remove os caracteres especificados
+                    for caracter in self.remover:
+                        palavra = palavra.replace(caracter, '')
 
-                    if palavra not in self.ignore:
+                    if palavra and palavra not in self.ignore:
                         if palavra not in self.dict:
                             self.dict[palavra] = 1
                         else:
@@ -88,7 +94,15 @@ class Classify:
 
         # percorre as palavras do texto
         for palavra in text:
-            if palavra not in self.ignore:
+            # ignora um link
+            if palavra[:4] == 'http':
+                continue
+                    
+            # remove os caracteres especificados
+            for caracter in self.remover:
+                palavra = palavra.replace(caracter, '')
+
+            if palavra and palavra not in self.ignore:
                 if palavra not in self.dict:
                     self.dict[palavra] = 1
                 else:

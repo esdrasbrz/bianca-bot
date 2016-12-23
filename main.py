@@ -26,8 +26,8 @@ ACCESS_TOKEN_SECRET = "v1X0bORIMR9yYDdpTNUgJMyJuEIHLJA3fnQZy77TKgWjK"
 MIN_FOLLOW = 50
 MAX_FOLLOW = 100
 ACOES_POR_ITERACAO = 2
-MIN_SLEEP = 10
-MAX_SLEEP = hour_to_sec(0.3)
+MIN_SLEEP = 60
+MAX_SLEEP = hour_to_sec(1)
 
 ## instancia o logger
 log = Logger()
