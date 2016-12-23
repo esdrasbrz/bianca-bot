@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Arquivo principal do BOT, totalmente autonomo que decide sozinho as opcoes
 
@@ -10,6 +9,11 @@ import time
 from random import randint
 from follow import Follow
 from post import Post
+from log import Logger
+
+## converte de horas para seguntos
+def hour_to_sec(hours):
+    return hours*3600
 
 ## Constantes do APP
 CONSUMER_KEY = "iG3uFTZS7iNqGVlroey3cV5os"
@@ -17,61 +21,53 @@ CONSUMER_SECRET = "bUZmQxZnaZLfPKeUIRC7EsfpK6S06RUwFHtGqWaaWnduXsC55C"
 ACCESS_TOKEN = "736567186169430016-AoxkDtl5irWfSp6XryCDDdKmziOiRsI"
 ACCESS_TOKEN_SECRET = "v1X0bORIMR9yYDdpTNUgJMyJuEIHLJA3fnQZy77TKgWjK"
 
-## converte de horas para seguntos
-def hour_to_sec(hours):
-    return hours*3600
+## Constantes para os randoms
+MIN_FOLLOW = 3
+MAX_FOLLOW = 50
+ACOES_POR_ITERACAO = 2
+MIN_SLEEP = 30
+MAX_SLEEP = hour_to_sec(1)
+
+## instancia o logger
+log = Logger()
 
 ## Abre a conexao
-print("Conectando-se")
+log.append("Conectando-se")
 api = twitter.Api(consumer_key        = CONSUMER_KEY,    \
                   consumer_secret     = CONSUMER_SECRET, \
                   access_token_key    = ACCESS_TOKEN,    \
                   access_token_secret = ACCESS_TOKEN_SECRET)
-print("Conectado com sucesso!")
-print("")
+log.append("Conectado com sucesso!")
+log.append("--------")
+log.append("")
+
+log.flush()
 
 # instancia as classes
-post = Post(api)
-follow = Follow(api)
+post = Post(api, log)
+follow = Follow(api, log)
 
-# controle do num da acao
-acao = 0
+## mapa com as ações possíveis
+acoes = {1: lambda: follow.follow_by_trend(count=str(randint(MIN_FOLLOW, MAX_FOLLOW))),
+        2: lambda: post.post_by_trends(),
+        3: lambda: post.rt_by_trends(),
+        4: lambda: post.fav_by_timeline(),
+        5: lambda: post.rt_by_timeline()}
 
-# Loop de acoes
+## MAIN LOOP
 while True:
-    # lista de acoes
-    acoes = []
-    # atualiza acao
-    acao += 1
+    # escolhe algumas opções
+    opcoes = [randint(min(acoes.keys()), max(acoes.keys())) for i in range(ACOES_POR_ITERACAO)]
 
-    # encontra uma opcao entre postar ou dar RT
-    acoes.append(randint(1, 3))
+    try:
+        for opcao in opcoes:
+            acoes[opcao]()
+    except Exception as e:
+        log.append("EXCEPTION: %s" % e)
 
-    # verifica se a acao eh par e nao vai postar algo
-    if acao%2 == 0 and acoes[0] != 1:
-        acoes.append(1) # postagem
+    delay = randint(MIN_SLEEP, MAX_SLEEP)
+    log.append('')
+    log.append('delay: %d s.' % delay)
+    log.flush()
 
-    # favorita algo na timeline/trends
-    acoes.append(randint(4, 5))
-
-    ## Verifica as opcoes e faz as acoes
-    for opcao in acoes:
-        try:
-            if opcao == 1: # postar
-                post.post_by_trends()
-            elif opcao == 2: # RT
-                post.rt_by_trends()
-            elif opcao == 3: # RT na timeline
-                post.rt_by_timeline()
-            elif opcao == 4: # favorita na timeline
-                post.fav_by_timeline()
-            elif opcao == 5: # favorita nos trends
-                post.fav_by_trends()
-        except UnicodeEncodeError as err:
-            print("Error: {0}".format(err))
-
-    # sleep por um tempo aleatorio
-    sleep = randint(60, hour_to_sec(1))
-
-    print("Sleep: %.2f" %sleep)
-    time.sleep(sleep)
+    time.sleep(delay)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Classe com as funcoes para postar novos conteudos no twitter, dar RT e favoritar
 
@@ -12,8 +11,9 @@ class Post:
     """
     Construtor que recebe a api twitter
     """
-    def __init__(self, api):
+    def __init__(self, api, log):
         self.api = api
+        self.log = log
 
     """
     Retorna um post aleatorio em trend aleatorio
@@ -76,7 +76,7 @@ class Post:
 
         # posta a mensagem
         self.api.PostUpdate(post.text)
-        print("Postado: %s\n" %post.text)
+        self.log.append("Postado: %s\n" %post.text)
 
     """
     RT em conteudo com base nos trends topics
@@ -87,7 +87,7 @@ class Post:
 
         # Retwitta
         self.api.PostRetweet(post.id)
-        print("RT: %s\n" %post.text)
+        self.log.append("RT: %s\n" %post.text)
 
     """
     RT em conteudo com base na timeline
@@ -98,7 +98,7 @@ class Post:
 
         # RT
         self.api.PostRetweet(post.id)
-        print("RT: %s\n" %post.text)
+        self.log.append("RT: %s\n" %post.text)
 
     """
     Favorita um tweet aleatorio da timeline
@@ -108,7 +108,7 @@ class Post:
 
         # Favorita
         self.api.CreateFavorite(status_id = post.id)
-        print("Favoritado: %s\n" %post.text)
+        self.log.append("Favoritado: %s\n" %post.text)
 
     """
     Favorita um tweet aleatorio dos trends
@@ -118,4 +118,4 @@ class Post:
 
         # Favorita
         self.api.CreateFavorite(id = post.id)
-        print("Favoritado: %s\n" %post.text)
+        self.log.append("Favoritado: %s\n" %post.text)
