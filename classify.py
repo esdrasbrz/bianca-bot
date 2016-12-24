@@ -68,6 +68,8 @@ class Classify:
             # percorre a pesquisa classificando as palavras encontradas
             for result in search:
                 for palavra in result.text.split(' '):
+                    palavra = palavra.lower()
+
                     # ignora um link
                     if palavra[:4] == 'http':
                         continue
@@ -94,6 +96,8 @@ class Classify:
 
         # percorre as palavras do texto
         for palavra in text:
+            palavra = palavra.lower()
+
             # ignora um link
             if palavra[:4] == 'http':
                 continue
