@@ -67,7 +67,10 @@ class Classify:
 
             # percorre a pesquisa classificando as palavras encontradas
             for result in search:
-                for palavra in result.text.split(' '):
+                # cria o vetor de palavras
+                palavras = [palavra for linha in result.text.split('\n') for palavra in linha.split(' ')]
+
+                for palavra in palavras:
                     palavra = palavra.lower()
 
                     # ignora um link
@@ -94,8 +97,11 @@ class Classify:
     def classify(self, text):
         nota = 0
 
+        # cria o vetor de palavras
+        palavras = [palavra for linha in text.split('\n') for palavra in linha.split(' ')]
+
         # percorre as palavras do texto
-        for palavra in text.split(' '):
+        for palavra in palavras:
             palavra = palavra.lower()
 
             # ignora um link
