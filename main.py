@@ -70,6 +70,10 @@ while True:
         # posta pelo trends com análise
         acoes[2]()
         log.flush()
+
+        # rt ou fav randomico
+        acoes[randint(3, 5)]()
+        log.flush()
     except Exception as e:
         log.append("EXCEPTION: %s" % e)
 
