@@ -73,7 +73,7 @@ while True:
         log.append("EXCEPTION ao seguir: %s" % e)
     finally:
         log.flush()
-
+    
     try:
         # posta pelo trends com análise
         acoes[2]()
