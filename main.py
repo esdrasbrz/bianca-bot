@@ -61,21 +61,34 @@ while True:
     try:
         # faz a análise no twitter
         classify.analyze()
+    except Exception as e:
+        log.append("EXCEPTION na análise: %s" % e)
+    finally:
         log.flush()
-
+    
+    try:
         # segue novos usuários
         acoes[1]()
+    except Exception as e:
+        log.append("EXCEPTION ao seguir: %s" % e)
+    finally:
         log.flush()
 
+    try:
         # posta pelo trends com análise
         acoes[2]()
+    except Exception as e:
+        log.append("EXCEPTION ao postar: %s" % e)
+    finally:
         log.flush()
 
+    try:
         # rt ou fav randomico
         acoes[randint(3, 5)]()
-        log.flush()
     except Exception as e:
-        log.append("EXCEPTION: %s" % e)
+        log.append("EXCEPTION ao RT / Fav: %s" % e)
+    finally:
+        log.flush()
 
     delay = randint(MIN_SLEEP, MAX_SLEEP)
     log.append('')
