@@ -60,20 +60,20 @@ acoes = {1: lambda: follow.follow_by_trend(count=str(randint(MIN_FOLLOW, MAX_FOL
 while True:
     try:
         # faz a análise no twitter
-#        classify.analyze()
-#        log.flush()
+        classify.analyze()
+        log.flush()
 
         # segue novos usuários
-#        acoes[1]()
-#        log.flush()
+        acoes[1]()
+        log.flush()
 
         # posta pelo trends com análise
         acoes[2]()
         log.flush()
 
         # rt ou fav randomico
-#        acoes[randint(3, 5)]()
-#        log.flush()
+        acoes[randint(3, 5)]()
+        log.flush()
     except Exception as e:
         log.append("EXCEPTION: %s" % e)
 
