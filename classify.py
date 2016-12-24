@@ -95,7 +95,7 @@ class Classify:
         nota = 0
 
         # percorre as palavras do texto
-        for palavra in text:
+        for palavra in text.split(' '):
             palavra = palavra.lower()
 
             # ignora um link

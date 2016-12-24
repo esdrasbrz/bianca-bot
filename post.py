@@ -102,6 +102,11 @@ class Post:
             if nota > melhor_post[1]:
                 melhor_post = (result.text, nota)
 
+        # verifica se o melhor post começa com RT, retirando-o
+        print(melhor_post[0][:3])
+        if melhor_post[0][:3] == 'RT ':
+            melhor_post = (melhor_post[0].split(':')[1][1:], melhor_post[1])
+
         # posta o melhor encontrado
         self.api.PostUpdate(melhor_post[0])
         self.log.append("Postado: %s" %melhor_post[0])
