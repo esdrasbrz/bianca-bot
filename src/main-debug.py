@@ -39,7 +39,8 @@ acoes = {1: lambda count: follow.follow_by_trend(count=count),
         6: lambda: post.rt_by_timeline(),
         7: lambda: utils.generate_trends(),
         8: lambda: utils.trim_words(),
-        9: lambda: classify.analyze()}
+        9: lambda: classify.analyze(),
+        10: lambda: classify.rt_fav_point()}
 
 
 while True:
@@ -54,6 +55,7 @@ while True:
     print("Gerar trends words - 7")
     print("Atualizar banco de dados com palavras a ignorar - 8")
     print("Analisar TTs - 9")
+    print("Atribuir pontuação do último tweet - 10")
     print("Sair - 0")
 
     # recebe a opcao

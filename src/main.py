@@ -47,7 +47,8 @@ classify = Classify(api, log)
 post = Post(api, log, classify)
 
 ## mapa com as ações possíveis
-acoes = {0: lambda: classify.analyze(),
+acoes = {10: lambda: classify.analyze(),
+        11: lambda: classify.rt_fav_point(),
         1: lambda: follow.follow_by_trend(count=str(randint(MIN_FOLLOW, MAX_FOLLOW))),
         2: lambda: post.post_by_trends(),
         3: lambda: post.rt_by_trends(),
@@ -58,7 +59,7 @@ acoes = {0: lambda: classify.analyze(),
 ## MAIN LOOP
 while True:
     # ações a serem executadas em ordem
-    todo = (0, 1, 2, randint(3, 6))
+    todo = (10, 11, 1, 2, randint(3, 6))
 
     # executa todas as ações
     for acao in todo:

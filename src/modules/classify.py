@@ -4,6 +4,7 @@ base de dados capaz de classificar a popularidade de um tweet
 """
 
 from random import randint
+import math
 
 class Classify:
     def __init__(self, api, log):
@@ -23,6 +24,28 @@ class Classify:
         # carrega o BD para a memória
         self.open_bd()
  
+    """
+    Função para pegar um texto e separar em uma lista de palavras
+    """
+    def _get_words(self, text):
+        return [palavra for linha in text.split('\n') for palavra in linha.split(' ')]
+
+    """
+    Verifica se a palavra é válida
+    """
+    def _check_word(self, palavra):
+        palavra = palavra.lower()
+
+        # ignora um link ou palavra específica
+        if palavra[:4] == 'http' or palavra in self.ignore:
+            return False
+                    
+        # remove os caracteres especificados
+        for caracter in self.remover:
+            palavra = palavra.replace(caracter, '')
+
+        return palavra
+
     """
     Função para abrir o banco de dados, carregando os dados para o dict
     """
@@ -68,6 +91,42 @@ class Classify:
             for palavra in self.dict:
                 arq.write('%s:%d\n' % (palavra, self.dict[palavra]))
 
+    def rt_fav_point(self):
+        # recebe as últimas publicações, para classificar a primeira
+        timeline = self.api.GetUserTimeline(count="50", exclude_replies=True, include_rts=False)
+
+        # media das 5 primeiras
+        media_rts = sum([timeline[i].retweet_count for i in range(1, 5)]) // 4
+        media_fav = sum([timeline[i].favorite_count for i in range(1, 5)]) // 4
+
+        # pega o último da timeline para fazer a análise
+        status = timeline[0]
+        
+        # calcula o excedente de rts e favs
+        n_rts = status.retweet_count - media_rts
+        n_fav = status.favorite_count - media_fav
+
+        self.log.append("Analisando o último tweet com relativo de %d RTs e %d favoritos." % (n_rts, n_fav))
+        self.log.flush()
+
+        # percorre as palavra se pelo menos um deles for positivo
+        if n_rts > 0 or n_fav > 0:
+            palavras = self._get_words(status.text)
+            
+            for palavra in palavras:
+                palavra = self._check_word(palavra)
+                if palavra:
+                    antigo = self.dict[palavra]
+
+                    if n_rts > 0: 
+                        self.dict[palavra] += int(100 * n_rts**2 * math.log(antigo))
+                    if n_fav > 0:
+                        self.dict[palavra] += int(50 * n_fav**2 * math.log(antigo))
+
+                    self.log.append("Atualizado palavra %s de %d para %d." % (palavra, antigo, self.dict[palavra]))
+                    self.log.flush()
+        else:
+            self.log.append("Terminado sem atribuir pontuação.")
 
     """
     Função para analisar os trends topics do twitter 
@@ -93,20 +152,11 @@ class Classify:
             # percorre a pesquisa classificando as palavras encontradas
             for result in search:
                 # cria o vetor de palavras
-                palavras = [palavra for linha in result.text.split('\n') for palavra in linha.split(' ')]
+                palavras = self._get_words(result.text)
 
                 for palavra in palavras:
-                    palavra = palavra.lower()
-
-                    # ignora um link
-                    if palavra[:4] == 'http':
-                        continue
-                    
-                    # remove os caracteres especificados
-                    for caracter in self.remover:
-                        palavra = palavra.replace(caracter, '')
-
-                    if palavra and palavra not in self.ignore:
+                    palavra = self._check_word(palavra)
+                    if palavra:
                         if palavra not in self.dict:
                             self.dict[palavra] = 1
                         else:
@@ -123,21 +173,12 @@ class Classify:
         nota = 0
 
         # cria o vetor de palavras
-        palavras = [palavra for linha in text.split('\n') for palavra in linha.split(' ')]
+        palavras = self._get_words(text)
 
         # percorre as palavras do texto
         for palavra in palavras:
-            palavra = palavra.lower()
-
-            # ignora um link
-            if palavra[:4] == 'http':
-                continue
-                    
-            # remove os caracteres especificados
-            for caracter in self.remover:
-                palavra = palavra.replace(caracter, '')
-
-            if palavra and palavra not in self.ignore:
+            palavra = self._check_word(palavra)
+            if palavra:
                 if palavra not in self.dict:
                     self.dict[palavra] = 1
                 else:
