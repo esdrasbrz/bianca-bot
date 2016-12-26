@@ -21,7 +21,7 @@ class Logger:
     Função para dar flush no arquivo final, salvando alterações
     """
     def flush(self):
-        path = 'log/'
+        path = '../log/'
         filename = date.today().strftime('%Y-%m-%d') + '.log'
 
         if self.identifier:

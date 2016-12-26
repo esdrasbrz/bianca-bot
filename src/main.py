@@ -7,10 +7,7 @@ Arquivo principal do BOT, totalmente autonomo que decide sozinho as opcoes
 import twitter
 import time
 from random import randint
-from follow import Follow
-from post import Post
-from log import Logger
-from classify import Classify
+from modules import *
 
 ## converte de horas para seguntos
 def hour_to_sec(hours):

@@ -10,11 +10,14 @@ class Classify:
         self.api = api
         self.log = log
 
+        # diretório onde se encontra os arquivos do banco de dados
+        self.PATH = '../bd/'
+
         # dicionário com as palavras encontradas e sua frequência
         self.dict = {}
 
         # abre o banco de dados lendo os termos encontrados anteriormente
-        with open('dict_bd.txt', 'r') as arq:
+        with open(self.PATH + 'dict_bd.txt', 'r') as arq:
             linhas = arq.read().split('\n')
 
             for linha in linhas:
@@ -29,7 +32,7 @@ class Classify:
 
         # lista com as palavras a serem ignoradas
         self.ignore = []
-        with open('palavras_ignorar.txt', 'r') as arq:
+        with open(self.PATH + 'palavras_ignorar.txt', 'r') as arq:
             self.ignore = arq.read().split('\n')
 
         # lista com os caracteres a serem removidos
@@ -39,7 +42,7 @@ class Classify:
     Função para salvar em um arquivo o dicionário
     """
     def save_bd(self):
-        with open('dict_bd.txt', 'w') as arq:
+        with open(self.PATH + 'dict_bd.txt', 'w') as arq:
             for palavra in self.dict:
                 arq.write('%s:%d\n' % (palavra, self.dict[palavra]))
 
