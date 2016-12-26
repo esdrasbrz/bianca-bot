@@ -65,14 +65,13 @@ class Post:
         melhor_post = self.get_best_post(search)
 
         # verifica se o melhor post começa com RT, retirando-o
-        if melhor_post[0].text[:3] == 'RT ':
-            melhor_post = (melhor_post[0].text.split(':')[1][1:], melhor_post[1])
-        else:
-            melhor_post = (melhor_post[0].text, melhor_post[1])
+        text = melhor_post[0].text
+        if text[:3] == 'RT ':
+            text = text.split(':')[1][1:]
 
         # posta o melhor encontrado
-        self.api.PostUpdate(melhor_post[0])
-        self.log.append("Postado: %s" %melhor_post[0])
+        self.api.PostUpdate(text, media=melhor_post[0].media)
+        self.log.append("Postado: %s" %text)
         self.log.append("Nota: %d" %melhor_post[1])
 
 
