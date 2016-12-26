@@ -11,22 +11,17 @@ class Post:
     """
     Construtor que recebe a api twitter
     """
-    def __init__(self, api, log):
+    def __init__(self, api, log, classify):
         self.api = api
         self.log = log
+        self.classify = classify
 
     """
-    Retorna um post aleatorio em trend aleatorio
+    Retorna uma lista de posts em trend aleatorio
     """
-    def get_post_trend_random(self):
+    def get_posts_trend_random(self):
         # pesquisa os trendings topics com id de campinas
         trends = self.api.GetTrendsWoeid(455828)
-
-        # lista com os posts possiveis
-        possiveis = []
-
-        # cria um filtro regex para retirar mentions
-        mentions_filter = re.compile(r'\@')
 
         # pega um trending topic aleatorio
         index = randint(0, len(trends)-1)
@@ -34,77 +29,46 @@ class Post:
 
         # pesquisa com base na query
         search = self.api.GetSearch(term=query, count="100")
+        return search
+
+    """
+    Retorna uma lista de posts da timeline
+    """
+    def get_posts_timeline(self):
+        # pesquisa 100 posts da timeline
+        timeline = self.api.GetHomeTimeline(count="100", exclude_replies=True)
+        return timeline
+
+    """
+    Retorna uma tupla com melhor post e sua nota com base em uma lista passada por parâmetro
+    """
+    def get_best_post(self, search):
+        # escolhe o melhor
+        melhor_post = (search[0], self.classify.classify(search[0].text))
         for result in search:
-            # verifica o filtro de mentions
-            if mentions_filter.search(result.text) is None:
-                possiveis.append(result)
+            nota = self.classify.classify(result.text)
 
-        # pega uma postagem aleatoria
-        index = randint(0, len(possiveis)-1)
+            if nota > melhor_post[1]:
+                melhor_post = (result, nota)
 
-        # retorna a postagem
-        return possiveis[index]
+        return melhor_post
 
-    """
-    Retorna um post aleatorio da timeline
-    """
-    def get_post_time_random(self):
-        # pesquisa 50 posts da timeline
-        timeline = self.api.GetHomeTimeline(count="50", exclude_replies=True)
-
-        # lista com os posts possiveis
-        possiveis = []
-
-        # filtro regex de mentions
-        mentions_filter = re.compile(r'\@')
-
-        # filtra as postagens
-        for post in timeline:
-            if mentions_filter.search(post.text) is None:
-                possiveis.append(post)
-
-        # retorna uma postagem aleatoria
-        index = randint(0, len(possiveis)-1)
-        return possiveis[index]
-
-    """
-    Posta novo conteudo com base nos trends topics
-    """
-    def post_by_trends(self):
-        # pega a postagem aleatoria
-        post = self.get_post_trend_random()
-
-        # posta a mensagem
-        self.api.PostUpdate(post.text)
-        self.log.append("Postado: %s\n" %post.text)
 
     """
     Posta analisando um trend topic aleatório
     """
-    def post_by_trends_with_analysis(self, classify):
-        # pesquisa os trendings topics com id de campinas
-        trends = self.api.GetTrendsWoeid(455828)
-
-        # cria um filtro regex para retirar mentions
-        mentions_filter = re.compile(r'\@')
-
-        # pega um trending topic aleatorio
-        index = randint(0, len(trends)-1)
-        query = trends[index].query
-
+    def post_by_trends(self):
         # pesquisa com base na query
-        search = self.api.GetSearch(term=query, count="100")
+        search = self.get_posts_trend_random()
 
-        melhor_post = (search[0].text, classify.classify(search[0].text))
-        for result in search:
-            nota = classify.classify(result.text)
-
-            if nota > melhor_post[1]:
-                melhor_post = (result.text, nota)
+        # escolhe o melhor
+        melhor_post = self.get_best_post(search)
 
         # verifica se o melhor post começa com RT, retirando-o
-        if melhor_post[0][:3] == 'RT ':
-            melhor_post = (melhor_post[0].split(':')[1][1:], melhor_post[1])
+        if melhor_post[0].text[:3] == 'RT ':
+            melhor_post = (melhor_post[0].text.split(':')[1][1:], melhor_post[1])
+        else:
+            melhor_post = (melhor_post[0].text, melhor_post[1])
 
         # posta o melhor encontrado
         self.api.PostUpdate(melhor_post[0])
@@ -116,40 +80,56 @@ class Post:
     RT em conteudo com base nos trends topics
     """
     def rt_by_trends(self):
-        # pega a postagem aleatoria
-        post = self.get_post_trend_random()
+        # pega as postagens aleatoria
+        search = self.get_posts_trend_random()
+
+        # escolhe o melhor
+        melhor_post = self.get_best_post(search)
 
         # Retwitta
-        self.api.PostRetweet(post.id)
-        self.log.append("RT: %s\n" %post.text)
+        self.api.PostRetweet(melhor_post[0].id)
+        self.log.append("RT de Trends: %s" %melhor_post[0].text)
+        self.log.append("Nota: %d" %melhor_post[1])
 
     """
     RT em conteudo com base na timeline
     """
     def rt_by_timeline(self):
-        # pega a postagem aleatoria
-        post = self.get_post_time_random()
+        # pega as postagens
+        search = self.get_posts_timeline()
+
+        # escolhe o melhor
+        melhor_post = self.get_best_post(search)
 
         # RT
-        self.api.PostRetweet(post.id)
-        self.log.append("RT: %s\n" %post.text)
+        self.api.PostRetweet(melhor_post[0].id)
+        self.log.append("RT da Timeline: %s\n" %melhor_post[0].text)
+        self.log.append("Nota: %d" %melhor_post[1])
 
     """
     Favorita um tweet aleatorio da timeline
     """
     def fav_by_timeline(self):
-        post = self.get_post_time_random()
+        search = self.get_posts_timeline()
+
+        # escolhe o melhor
+        melhor_post = self.get_best_post(search)
 
         # Favorita
-        self.api.CreateFavorite(status_id = post.id)
-        self.log.append("Favoritado: %s\n" %post.text)
+        self.api.CreateFavorite(status_id = melhor_post[0].id)
+        self.log.append("Favoritado da Timeline: %s\n" %melhor_post[0].text)
+        self.log.append("Nota: %d" %melhor_post[1])
 
     """
     Favorita um tweet aleatorio dos trends
     """
     def fav_by_trends(self):
-        post = self.get_post_trend_random()
+        search = self.get_posts_trend_random()
+
+        # escolhe o melhor
+        melhor_post = self.get_best_post(search)
 
         # Favorita
-        self.api.CreateFavorite(id = post.id)
-        self.log.append("Favoritado: %s\n" %post.text)
+        self.api.CreateFavorite(status_id = melhor_post[0].id)
+        self.log.append("Favoritado de Trends: %s\n" %melhor_post[0].text)
+        self.log.append("Nota: %d" %melhor_post[1])

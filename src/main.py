@@ -42,51 +42,34 @@ log.append("")
 log.flush()
 
 # instancia as classes
-post = Post(api, log)
 follow = Follow(api, log)
 classify = Classify(api, log)
+post = Post(api, log, classify)
 
 ## mapa com as ações possíveis
-acoes = {1: lambda: follow.follow_by_trend(count=str(randint(MIN_FOLLOW, MAX_FOLLOW))),
-        2: lambda: post.post_by_trends_with_analysis(classify),
+acoes = {0: lambda: classify.analyze(),
+        1: lambda: follow.follow_by_trend(count=str(randint(MIN_FOLLOW, MAX_FOLLOW))),
+        2: lambda: post.post_by_trends(),
         3: lambda: post.rt_by_trends(),
-        4: lambda: post.fav_by_timeline(),
-        5: lambda: post.rt_by_timeline()}
+        4: lambda: post.fav_by_trends(),
+        5: lambda: post.fav_by_timeline(),
+        6: lambda: post.rt_by_timeline()}
 
 ## MAIN LOOP
 while True:
-    try:
-        # faz a análise no twitter
-        classify.analyze()
-    except Exception as e:
-        log.append("EXCEPTION na análise: %s" % e)
-    finally:
-        log.flush()
-    
-    try:
-        # segue novos usuários
-        acoes[1]()
-    except Exception as e:
-        log.append("EXCEPTION ao seguir: %s" % e)
-    finally:
-        log.flush()
-    
-    try:
-        # posta pelo trends com análise
-        acoes[2]()
-    except Exception as e:
-        log.append("EXCEPTION ao postar: %s" % e)
-    finally:
-        log.flush()
+    # ações a serem executadas em ordem
+    todo = (0, 1, 2, randint(3, 6))
 
-    try:
-        # rt ou fav randomico
-        acoes[randint(3, 5)]()
-    except Exception as e:
-        log.append("EXCEPTION ao RT / Fav: %s" % e)
-    finally:
-        log.flush()
+    # executa todas as ações
+    for acao in todo:
+        try:
+            acoes[acao]()
+        except Exception as e:
+            log.append("EXCEPTION: %s" % e)
+        finally:
+            log.flush()
 
+    # dorme por um período
     delay = randint(MIN_SLEEP, MAX_SLEEP)
     log.append('')
     log.append('delay: %d s.' % delay)

@@ -25,19 +25,21 @@ print("")
 
 # instancia as classes
 log = Logger('debug')
-post = Post(api, log)
 follow = Follow(api, log)
 classify = Classify(api, log)
+post = Post(api, log, classify)
 utils = Utils(classify, log)
 
 ## mapa com as ações possíveis
 acoes = {1: lambda count: follow.follow_by_trend(count=count),
-        2: lambda: post.post_by_trends_with_analysis(classify),
-        3: lambda: post.rt_by_trends(),
-        4: lambda: post.fav_by_timeline(),
-        5: lambda: post.rt_by_timeline(),
-        6: lambda: utils.generate_trends(),
-        7: lambda: utils.trim_words()}
+        2: lambda: post.post_by_trends(),
+        3: lambda: post.fav_by_trends(),
+        4: lambda: post.rt_by_trends(),
+        5: lambda: post.fav_by_timeline(),
+        6: lambda: post.rt_by_timeline(),
+        7: lambda: utils.generate_trends(),
+        8: lambda: utils.trim_words(),
+        9: lambda: classify.analyze()}
 
 
 while True:
@@ -45,11 +47,13 @@ while True:
     print("Menu:")
     print("Seguir novas pessoas - 1")
     print("Postar com base em trends com análise - 2")
-    print("RT com base em trends - 3")
-    print("Favoritar com base em timeline - 4")
-    print("RT com base em timeline - 5")
-    print("Gerar trends words - 6")
-    print("Atualizar banco de dados com palavras a ignorar - 7")
+    print("Favoritar com base em trends - 3")
+    print("RT com base em trends - 4")
+    print("Favoritar com base em timeline - 5")
+    print("RT com base em timeline - 6")
+    print("Gerar trends words - 7")
+    print("Atualizar banco de dados com palavras a ignorar - 8")
+    print("Analisar TTs - 9")
     print("Sair - 0")
 
     # recebe a opcao
