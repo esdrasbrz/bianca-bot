@@ -15,6 +15,19 @@ class Classify:
 
         # dicionário com as palavras encontradas e sua frequência
         self.dict = {}
+        # lista com as palavras a serem ignoradas
+        self.ignore = []
+        # lista com os caracteres a serem removidos
+        self.remover = []
+
+        # carrega o BD para a memória
+        self.open_bd()
+ 
+    """
+    Função para abrir o banco de dados, carregando os dados para o dict
+    """
+    def open_bd(self):
+        self.dict = {}
 
         # abre o banco de dados lendo os termos encontrados anteriormente
         with open(self.PATH + 'dict_bd.txt', 'r') as arq:
@@ -35,8 +48,17 @@ class Classify:
         with open(self.PATH + 'palavras_ignorar.txt', 'r') as arq:
             self.ignore = arq.read().split('\n')
 
+        self.log.append("Carregado palavras_ignorar com %d palavras." % len(self.ignore))
+        self.log.flush()
+
         # lista com os caracteres a serem removidos
-        self.remover = list(".,/?;:'\"[]{}\\|-_=+`~!@#$%^&*()1234567890")
+        self.remover = []
+        with open(self.PATH + 'char_ignorar.txt', 'r') as arq:
+            self.remover = list(arq.read())
+
+        self.log.append("Carregado char_ignorar com %d caracteres." % len(self.remover))
+        self.log.flush()
+
 
     """
     Função para salvar em um arquivo o dicionário

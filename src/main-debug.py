@@ -28,7 +28,7 @@ log = Logger('debug')
 post = Post(api, log)
 follow = Follow(api, log)
 classify = Classify(api, log)
-trends = TrendsWords(classify, log)
+utils = Utils(classify, log)
 
 ## mapa com as ações possíveis
 acoes = {1: lambda count: follow.follow_by_trend(count=count),
@@ -36,7 +36,8 @@ acoes = {1: lambda count: follow.follow_by_trend(count=count),
         3: lambda: post.rt_by_trends(),
         4: lambda: post.fav_by_timeline(),
         5: lambda: post.rt_by_timeline(),
-        6: lambda: trends.generate()}
+        6: lambda: utils.generate_trends(),
+        7: lambda: utils.trim_words()}
 
 
 while True:
@@ -48,6 +49,7 @@ while True:
     print("Favoritar com base em timeline - 4")
     print("RT com base em timeline - 5")
     print("Gerar trends words - 6")
+    print("Atualizar banco de dados com palavras a ignorar - 7")
     print("Sair - 0")
 
     # recebe a opcao
