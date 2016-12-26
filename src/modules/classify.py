@@ -128,6 +128,8 @@ class Classify:
         else:
             self.log.append("Terminado sem atribuir pontuação.")
 
+        self.save_bd()
+
     """
     Função para analisar os trends topics do twitter 
     """
