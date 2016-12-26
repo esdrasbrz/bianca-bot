@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Arquivo principal do BOT, que possui controle das opcoes
 
@@ -6,8 +5,7 @@ Arquivo principal do BOT, que possui controle das opcoes
 """
 
 import twitter
-from follow import Follow
-from post import Post
+from modules import *
 
 ## Constantes do APP
 CONSUMER_KEY = "iG3uFTZS7iNqGVlroey3cV5os"
@@ -26,14 +24,24 @@ print("Conectado com sucesso!")
 print("")
 
 # instancia as classes
-post = Post(api)
-follow = Follow(api)
+log = Logger('debug')
+post = Post(api, log)
+follow = Follow(api, log)
+classify = Classify(api, log)
+
+## mapa com as ações possíveis
+acoes = {1: lambda count: follow.follow_by_trend(count=count),
+        2: lambda: post.post_by_trends_with_analysis(classify),
+        3: lambda: post.rt_by_trends(),
+        4: lambda: post.fav_by_timeline(),
+        5: lambda: post.rt_by_timeline()}
+
 
 while True:
     ## Imprime menu de acoes
     print("Menu:")
     print("Seguir novas pessoas - 1")
-    print("Postar com base em trends - 2")
+    print("Postar com base em trends com análise - 2")
     print("RT com base em trends - 3")
     print("Favoritar com base em timeline - 4")
     print("RT com base em timeline - 5")
@@ -44,18 +52,13 @@ while True:
 
     ## Verifica as opcoes e faz as acoes
     if opcao == 1: # seguir novas pessoas
-        term = input("Digite os termos de pesquisa: ")
         count = input("Quantos resultados? ")
 
-        follow.follow_by_search(term=term, count=count)
-    elif opcao == 2: # postar
-        post.post_by_trends()
-    elif opcao == 3: # RT
-        post.rt_by_trends()
-    elif opcao == 4:
-        post.fav_by_timeline()
-    elif opcao == 5:
-        post.rt_by_timeline()
-    elif opcao == 0: # sair
+        acoes[opcao](count)
+    elif opcao != 0:
+        acoes[opcao]()
+    else: # sair
         print("Bye!")
         break
+
+    log.flush()
