@@ -85,3 +85,8 @@ s
 não
 nao
 n
+como
+pra
+mais
+menos
+mas

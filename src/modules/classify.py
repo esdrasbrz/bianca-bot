@@ -119,9 +119,9 @@ class Classify:
                     antigo = self.dict[palavra]
 
                     if n_rts > 0: 
-                        self.dict[palavra] += int(100 * n_rts**2 * math.log(antigo))
+                        self.dict[palavra] += int(10 * n_rts**2 * math.log(antigo))
                     if n_fav > 0:
-                        self.dict[palavra] += int(50 * n_fav**2 * math.log(antigo))
+                        self.dict[palavra] += int(8 * n_fav**2 * math.log(antigo))
 
                     self.log.append("Atualizado palavra %s de %d para %d." % (palavra, antigo, self.dict[palavra]))
                     self.log.flush()
@@ -173,6 +173,7 @@ class Classify:
     """
     def classify(self, text):
         nota = 0
+        count = 0
 
         # cria o vetor de palavras
         palavras = self._get_words(text)
@@ -184,6 +185,10 @@ class Classify:
                 if palavra not in self.dict:
                     self.dict[palavra] = 1
                 else:
+                    count += 1
                     nota += self.dict[palavra]
+
+        if count > 0:
+            nota = nota // count
 
         return nota

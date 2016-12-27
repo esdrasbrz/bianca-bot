@@ -60,15 +60,15 @@ class Post:
     def post_by_trends(self):
         # pesquisa com base na query
         search = self.get_posts_trend_random()
-
+        
         # escolhe o melhor
         melhor_post = self.get_best_post(search)
 
         # verifica se o melhor post começa com RT, retirando-o
         text = melhor_post[0].text
         if text[:3] == 'RT ':
-            text = text.split(':')[1][1:]
-
+            text = ':'.join(text.split(':')[1:])[1:]
+        
         # posta o melhor encontrado
         self.api.PostUpdate(text)
         self.log.append("Postado: %s" %text)
