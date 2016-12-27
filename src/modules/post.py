@@ -70,7 +70,7 @@ class Post:
             text = text.split(':')[1][1:]
 
         # posta o melhor encontrado
-        self.api.PostUpdate(text, media=melhor_post[0].media)
+        self.api.PostUpdate(text)
         self.log.append("Postado: %s" %text)
         self.log.append("Nota: %d" %melhor_post[1])
 
